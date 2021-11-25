@@ -49,7 +49,7 @@ int main() {
     array<int,11> table;
     table.fill(0);
     
-    cout << table << endl;
+    cout << "Hello World" << endl;
     
     return 0;
     
