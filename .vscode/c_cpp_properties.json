@@ -1,0 +1,24 @@
+{
+  "configurations": [
+    {
+      "name": "macos-clang-arm64",
+      "includePath": [
+        "${workspaceFolder}/**"
+      ],
+      "compilerPath": "/usr/bin/clang",
+      "cStandard": "${default}",
+      "cppStandard": "${default}",
+      "intelliSenseMode": "macos-clang-arm64",
+      "compilerArgs": [
+        "-Wall",
+        "-Wextra",
+        "-Wunitialized",
+        "-Wconversion",
+        "-o",
+        "-pedantic-errors",
+        "a.out"
+      ]
+    }
+  ],
+  "version": 4
+}
