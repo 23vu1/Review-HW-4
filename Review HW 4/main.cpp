@@ -25,19 +25,18 @@ public:
     Hash_Table();
     ~Hash_Table();
     void insert(int key);
-    void remove(int key);
     void resize();
-    bool search(int key);
     void print();
-    int nextPrime(int n);
-    bool isPrime(int n);
+
+    int nextPrime(int in);
+    bool isPrime(int in);
 };
 
 Hash_Table::Hash_Table(){
     max_size = 11; // The initial size of the array will be 11
     size = 0;
     table = new int[max_size];
-    for(int i = 0; i < max_size; i++){
+    for(int i = 0; i < max_size; i++){ // Default values for the array (0)
         table[i] = 0;
     }
 }
@@ -48,100 +47,99 @@ Hash_Table::~Hash_Table(){
 
 void Hash_Table::insert(int key){
     int index = key % max_size;
-    if(table[index] == 0){
+    
+    if(table[index] == 0){ // If the index is empty, insert the key
         table[index] = key;
         size++;
     }
     else{
         int i = 1;
-        while(table[(index + i*i) % max_size] != 0){
+        while(table[(index + i*i) % max_size] != 0){ // Quadratic probing
             i++;
         }
-        table[(index + i*i) % max_size] = key;
+        table[(index + i*i) % max_size] = key; // Insert the key at the next available index
         size++;
     }
-    if( (size) >= ((0.5) * max_size) ){
-        // cout << "Hash table is >= 0.5 Load, Expanding. Current: " << max_size << endl;
-        // max_size = max_size * 2;
-        // max_size = nextPrime(max_size);
-        // cout << "NextPrime: " << max_size << endl;
+
+    if( (size) >= ((0.5) * max_size) ){ // Resize when the load factor is greater than 0.5
         resize();
     }
 }
 
 void Hash_Table::resize(){
     int old_size = max_size;
-    max_size = nextPrime(max_size * 2);
+    max_size = nextPrime(max_size * 2); // Double the size of the array
     int *temp = new int[max_size];
-    for(int i = 0; i < max_size; i++){
+
+    for(int i = 0; i < max_size; i++){ // Default values for the array (0)
         temp[i] = 0;
     }
-    for(int i = 0; i < old_size; i++){
+    for(int i = 0; i < old_size; i++){ // Rehash the values
         if(table[i] != 0){
             int index = table[i] % max_size;
-            if(temp[index] == 0){
+
+            if(temp[index] == 0){ // If the index is empty, insert the value
                 temp[index] = table[i];
             }
-            else{
+            else{ // If the index is not empty, find the next empty index
                 int j = 1;
-                while(temp[(index + j*j) % max_size] != 0){
+                while(temp[(index + j*j) % max_size] != 0){ // Quadratic probing
                     j++;
                 }
-                temp[(index + j*j) % max_size] = table[i];
+                temp[(index + j*j) % max_size] = table[i]; // Insert the value at the next available index
             }
         }
     }
-    delete [] table;
-    table = temp;
+    delete [] table; // Delete the old array
+    table = temp; // Set the new array to the old array
 }
 
 void Hash_Table::print(){
-    for(int i = 0; i < max_size; i++){
-        if(table[i] == 0){
-            cout << "_" << " ";
+    for(int i = 0; i < max_size; i++){ // Print the values in the array
+        if(table[i] == 0){ // If the value is 0, print an underscore
+            cout << "_" << " "; 
         }
-        else{
+        else{ // If the value is not 0, print the value
             cout << table[i] << " ";
         }
     }
-    cout << endl;
+    cout << endl; // New line
 }
 
-int Hash_Table::nextPrime(int n)
+int Hash_Table::nextPrime(int in)
 {
-    // Base case
-    if (n <= 1)
+    if (in <= 1){ // Base Case for n <= 1
         return 2;
+    }
  
-    int prime = n;
+    int prime = in;
     bool found = false;
  
-    // Loop continuously until isPrime returns
-    // true for a number greater than n
-    while (!found) {
+    while (!found) { // Loop until a prime number is found
         prime++;
-        if (isPrime(prime))
+        if (isPrime(prime)) 
             found = true;
     }
 
-    return prime;
+    return prime; // Return the prime number
 }
 
-bool Hash_Table::isPrime(int n)
+bool Hash_Table::isPrime(int in)
 {
-    // Corner cases
-    if (n <= 1)  return false;
-    if (n <= 3)  return true;
+    if (in <= 1)  return false; // 0, 1 are not prime
+    if (in <= 3)  return true; // 2, 3 are prime
    
-    // This is checked so that we can skip 
-    // middle five numbers in below loop
-    if (n%2 == 0 || n%3 == 0) return false;
+    if (in%2 == 0 || in%3 == 0){
+        return false; // If n is divisible by 2 or 3, it is not prime
+    }
    
-    for (int i=5; i*i<=n; i=i+6)
-        if (n%i == 0 || n%(i+2) == 0)
-           return false;
+    for (int i=5; i*i<=in; i=i+6){
+        if (in%i == 0 || in%(i+2) == 0){
+            return false; // If n is divisible by i or i+2, it is not prime
+        }
+    }
    
-    return true;
+    return true; // If n has no divisors less than its square root, it is prime
 }
 
 int main() {
@@ -168,9 +166,11 @@ int main() {
     When printing the hash table, print a space between values and print an underscore if the element has no value
     Create a main function to test the hash table
      
-     */
+    */
+
     int values = 0;
     int value = 0;
+
     Hash_Table hash_table;
 
     cout << "Enter Number of Values in Hash_Table: "; // Ask the user for the number of values to be entered
@@ -183,10 +183,10 @@ int main() {
     for(int i = 0; i < values; i++){ // Enter all the values and display the final hash table
         cout << "Enter Value: ";
         cin >> value;
-        hash_table.insert(value);
+        hash_table.insert(value); // Insert the value
     }
-    hash_table.print();
 
-    return 0;
-    
+    hash_table.print(); // Print the hash table
+
+    return 0; // End the program
 }
