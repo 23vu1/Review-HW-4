@@ -47,42 +47,31 @@ Hash_Table::~Hash_Table(){
 }
 
 void Hash_Table::insert(int key){
-    if( (size+1) > ((0.5) * max_size)){
+    int index = key % max_size;
+    if(table[index] == 0){
+        table[index] = key;
+        size++;
+    }
+    else{
+        int i = 1;
+        while(table[(index + i*i) % max_size] != 0){
+            i++;
+        }
+        table[(index + i*i) % max_size] = key;
+        size++;
+    }
+    if( (size) >= ((0.5) * max_size) ){
         // cout << "Hash table is >= 0.5 Load, Expanding. Current: " << max_size << endl;
         // max_size = max_size * 2;
         // max_size = nextPrime(max_size);
         // cout << "NextPrime: " << max_size << endl;
         resize();
     }
-    int index = key % max_size;
-    int i = 0;
-    while(table[index] != 0){
-        index = (index + i*i) % max_size;
-        i++;
-    }
-    table[index] = key;
-    size++;
-}
-
-void Hash_Table::remove(int key){
-    if(size == 0){
-        cout << "Hash table is empty" << endl;
-        return;
-    }
-    int index = key % max_size;
-    int i = 0;
-    while(table[index] != key){
-        index = (index + i*i) % max_size;
-        i++;
-    }
-    table[index] = 0;
-    size--;
 }
 
 void Hash_Table::resize(){
     int old_size = max_size;
-    max_size = max_size * 2;
-    max_size = nextPrime(max_size);
+    max_size = nextPrime(max_size * 2);
     int *temp = new int[max_size];
     for(int i = 0; i < max_size; i++){
         temp[i] = 0;
@@ -90,12 +79,16 @@ void Hash_Table::resize(){
     for(int i = 0; i < old_size; i++){
         if(table[i] != 0){
             int index = table[i] % max_size;
-            int j = 0;
-            while(temp[index] != 0){
-                index = (index + j*j) % max_size;
-                j++;
+            if(temp[index] == 0){
+                temp[index] = table[i];
             }
-            temp[index] = table[i];
+            else{
+                int j = 1;
+                while(temp[(index + j*j) % max_size] != 0){
+                    j++;
+                }
+                temp[(index + j*j) % max_size] = table[i];
+            }
         }
     }
     delete [] table;
@@ -182,6 +175,10 @@ int main() {
 
     cout << "Enter Number of Values in Hash_Table: "; // Ask the user for the number of values to be entered
     cin >> values;
+
+    // Case 1: 244 376 587 751 630
+    // Case 2(B): 994 974 406 846 770
+    // Case 2(A): 994 974 406 846 770 etc
 
     for(int i = 0; i < values; i++){ // Enter all the values and display the final hash table
         cout << "Enter Value: ";
